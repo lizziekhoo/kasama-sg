@@ -41,8 +41,14 @@ export default function AuthPage() {
 
     try {
       if (mode === 'register') {
-        if (password !== confirmPassword) {
+        // Catch the common ones before we even bother the server.
+        if (password.length < 6) {
           setError(t('errorWeakPassword'))
+          setLoading(false)
+          return
+        }
+        if (password !== confirmPassword) {
+          setError(t('errorPasswordMismatch'))
           setLoading(false)
           return
         }
@@ -55,8 +61,14 @@ export default function AuthPage() {
         // All good — App.jsx will handle the redirect
       }
     } catch (err) {
-      if (err.message?.includes('Invalid login')) setError(t('errorInvalidCredentials'))
-      else if (err.message?.includes('already registered')) setError(t('errorEmailTaken'))
+      // Match our friendly copy where we can — but otherwise show Supabase's
+      // actual message. A vague "something went wrong" is useless when you're
+      // trying to work out why sign up keeps failing.
+      const msg = (err?.message || '').toLowerCase()
+      if (msg.includes('invalid login')) setError(t('errorInvalidCredentials'))
+      else if (msg.includes('already registered')) setError(t('errorEmailTaken'))
+      else if (msg.includes('password') && msg.includes('6')) setError(t('errorWeakPassword'))
+      else if (err?.message) setError(err.message)
       else setError(t('errorGeneric'))
     } finally {
       setLoading(false)
