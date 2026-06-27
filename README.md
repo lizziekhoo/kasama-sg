@@ -1,157 +1,274 @@
-# Kasama 
-### NUS Orbital 2026 (Artemis)
+# Kasama SG / FLOWSPACE
 
-**Together, we belong.**
+**NUS Orbital 2026**
+**Proposed Level of Achievement: Vostok**
 
+## Project Overview
 
-Kasama (Filipino for *together*) is a progressive web app that helps migrant domestic helpers feel a little less alone by making Singapore feel more like home. We felt that a lot of the information this group needs like community events, legal rights, emergency contacts, familiar food travels by word of mouth. We wanted to fix that to make sure that Singapore is a place where everyone can find their footing.
+Kasama SG / FLOWSPACE is a mobile-first web application designed to support migrant domestic helpers in Singapore by making key resources easier to access. The platform aims to consolidate important information such as multilingual onboarding, support contacts, rights information, basic resource browsing, and personal tracking tools into one simple prototype.
 
-**Live app: [kasama-sg-7k87.vercel.app](https://kasama-sg-7k87.vercel.app)**
+The project was motivated by the observation that many useful resources for migrant domestic helpers are scattered across different websites, community groups, social media posts, or shared by word of mouth. This makes it difficult for new users to find relevant help quickly, especially if they are new to Singapore or unfamiliar with where to search.
 
----
-
-## Motivation
-
-This app was born from personal experience. Both of us have lived with migrant domestic helpers in the past, hence we have witnessed firsthand the quiet struggles they face. Most things are travelled by word of mouth (which everyone doesn’t have equal access to), helpers may feel lost navigating an unfamiliar country, finding community, and simply feeling at home in a place that isn't theirs. Take the spaces that domestic helpers gather on Sundays — volleyball tournaments and community events do happen, but they're advertised only through Facebook posts or passed along by word of mouth. If you're new, or simply not in the right circle, you'd never know, hindering the process by which someone is integrated into that particular community. 
-
-While doing research, we found that there is an existing app for migrant workers called FWMOM. However, the app, being tailored to migrant workers as a whole, does not cater to the specific social and physical needs of domestic helpers. In short, the app does not focus on the everyday things that make a foreign environment feel less foreign. We wanted to change that.
-
----
+Kasama SG therefore focuses on presenting key information in a simple, mobile-friendly, and accessible way. For Milestone 2, the goal is to demonstrate a working prototype with multiple usable features that show the intended direction of the application.
 
 ## Aim
 
-Our goal is to build something accessible that brings those whispered recommendations into one place — connecting migrant workers with community events, places of worship, familiar food options, and the everyday things that make a foreign environment feel a little less foreign. 
+Our aim is to create a simple support platform that helps migrant domestic helpers access essential information more easily. The app focuses on improving access to community resources, emergency support, rights-related information, communication help, and basic personal logging tools.
 
-Beyond the community, we also want to make information more accessible — from understanding their employment rights, to navigating the immigration journey, to knowing what legal protections are available to them. Many migrant workers are unaware of the rights and resources they are entitled to, and that knowledge gap can leave them vulnerable.
-The app will support multilingual access through pre-translated content and structured phrasebooks, ensuring usability without reliance on costly real-time translation APIs.
-In future iterations, we aim to explore lightweight community features such as curated discussions or FAQs, though this is not part of the initial MVP due to moderation and scalability considerations.
-Emergency contacts and helpline information will also be surfaced prominently, so that help is always one tap away when it matters most. 
+The prototype is not meant to be a fully polished production-ready platform yet. Instead, it demonstrates the minimum working structure required for a Vostok-level Milestone 2 submission and provides a foundation for future improvements.
 
-The system is designed as a lightweight, mobile-first Progressive Web App to ensure accessibility for users with limited device capabilities and connectivity.
+## Target Users
 
----
+The main target users are migrant domestic helpers in Singapore who may need easier access to practical support information.
 
-## Features
+These users may include:
 
-### Language Selection
-#### The first thing users see — choose your language before anything else
+* newly arrived domestic helpers who are unfamiliar with available resources
+* domestic helpers looking for help contacts or support organisations
+* users who want simple information about rights and support channels
+* users who may benefit from basic communication phrases
+* users who want a simple personal record or salary log
+* users who prefer a mobile-friendly platform with simple navigation
 
-Migrant domestic helpers in Singapore come from all over the world, so we want to build Kasama for all languages. This is why the very first screen lets users pick from four languages (currently, with more to be added). The choice is saved to the device so the app remembers it on every visit (by localStorage)
+## Proposed Level of Achievement
 
-<p align="center">
-  <img src="docs/language1.jpeg" width="30%"/>
-  <img src="docs/language2.jpeg" width="30%"/>
-</p>
+**Vostok**
 
-- Supports English, Filipino (Tagalog), 中文 (Chinese), and தமிழ் (Tamil)
-- Switching to Filipino immediately updates the tagline, labels, and prompts to Tagalog
-- Language preference is persisted in localStorage
-- Built using react-i18next with pre-translated content 
+For Milestone 2, our focus is on meeting the minimum project requirements by delivering a working prototype with several basic but usable features. The app demonstrates the main user flows and core functionality of the platform, while leaving room for future improvement and refinement.
 
----
+## Milestone 2 Progress
 
-### Authentication
-#### Secure sign in and account creation, in your language
+For Milestone 2, we expanded the initial proof of concept into a working prototype. The prototype now includes multiple pages and core user flows that demonstrate the intended direction of the application.
 
-Using Supabase Auth, users can sign in to an existing account or create a new one from the same screen. 
+The following features have been completed to a basic usable level:
 
-<p align="center">
-  <img src="docs/loginattempt.jpeg" width="30%"/>
-  <img src="docs/loginfail.jpeg" width="30%"/>
-  <img src="docs/loginsucess.jpeg" width="30%"/>
-</p>
+* multilingual onboarding and language selection
+* login and registration flow using Supabase authentication
+* basic help directory / emergency support page
+* basic rights and information library
+* basic phrasebook / communication support page
+* basic salary tracker / personal log feature
+* basic resource / location directory page
+* mobile-friendly navigation and page structure
+* deployed working version of the application
+* updated README documentation and clearer setup instructions
 
-- Sign in with email and password
-- Wrong credentials shows a friendly error message
-- Successful login redirects to the home screen with the user's email shown
-- Auth state persists across sessions, once signed in, users go straight to the home screen on return (by storing the session token in the browser's localStorage via Supabase Auth)
-- Built on Supabase Auth
+These features are implemented at a prototype level and are meant to satisfy the minimum Milestone 2 requirements for a Vostok-level submission. The focus is on showing that the app has progressed beyond a single feature and now contains a broader working structure that can be improved in future milestones.
 
----
+## Features Implemented
 
-### Account Creation
-#### Join the Kasama family
+### 1. Multilingual Onboarding
 
-New users can create an account with email and password. The form includes a confirmation field ("Just to be sure, type it again") and validates that both passwords match before submitting.
+The app includes a language selection flow that allows users to begin by selecting their preferred language. This supports the project’s goal of making the platform more accessible to users who may not be fully comfortable navigating resources in English.
 
-<p align="center">
-  <img src="docs/createaccount.jpeg" width="30%"/>
-</p>
+At this stage, the multilingual feature is implemented as a basic onboarding and navigation support feature. It establishes the intended user flow for future expansion into more complete translated content.
 
-- Password confirmation field prevents typos
-- All copy ("Join the family", "Just to be sure, type it again") is warm and approachable, not clinical
-- Built on Supabase Auth with Row Level Security for privacy
+### 2. Authentication
 
----
+The app includes a basic login and registration flow using Supabase authentication. Users can register for an account and log in through the authentication pages.
 
-## Project structure
+This provides the foundation for future user-specific features such as saved personal logs, user preferences, and personalised resource access.
 
+### 3. Help Directory
+
+The help directory provides a basic structure for emergency contacts and support resources. It is intended to help users quickly locate important support channels.
+
+At the prototype level, this feature demonstrates how support information can be organised into categories and displayed in a simple, mobile-friendly way.
+
+### 4. Rights and Information Library
+
+The rights library organises practical information into simple sections. This feature is intended to help users understand important workplace and support-related information in a more accessible format.
+
+For Milestone 2, the rights library is implemented as a basic information section that can be expanded with more detailed and verified content in future iterations.
+
+### 5. Phrasebook
+
+The phrasebook provides basic communication support through commonly needed phrases. This is intended to help users in everyday situations where simple structured phrases may be useful.
+
+At this stage, the phrasebook demonstrates the intended structure of communication cards and can be expanded with more categories, translations, and audio support in future versions.
+
+### 6. Salary Tracker / Personal Log
+
+The salary tracker provides a basic form of personal record keeping. Users can record salary-related information or notes, forming the foundation for a more complete tracking feature in future development.
+
+This feature is intended to support users in keeping track of payment-related details in a simple and accessible way.
+
+### 7. Resource / Location Directory
+
+The resource directory provides a basic structure for displaying useful places or resources. This feature is intended to support future expansion into a more complete curated map or location-based directory.
+
+For Milestone 2, the feature demonstrates the basic idea of organising useful locations and resources within the app.
+
+### 8. Mobile-Friendly Navigation
+
+The app uses a simple page structure and navigation flow so that users can move between the main features. The interface is designed with a mobile-first approach, as the target users are likely to access the platform through a phone.
+
+## Current User Flow
+
+The current prototype supports the following basic flow:
+
+1. User opens the app.
+2. User selects a preferred language.
+3. User can register or log in.
+4. User can navigate to different resource sections.
+5. User can access support information, rights information, phrasebook content, salary tracking, and resource pages.
+
+This flow demonstrates the minimum working structure of the platform for Milestone 2.
+
+## Tech Stack
+
+* React
+* Vite
+* Supabase
+* GitHub
+* Vercel / deployment platform
+* Mobile-first web app structure
+
+## Software Engineering Practices
+
+For Milestone 2, we improved the structure of the project by separating features into clearer pages and components. The app follows a React and Vite frontend structure, with Supabase used for authentication and backend-related setup.
+
+We also improved our development process by using branches and pull requests rather than pushing all changes directly to `main`. This makes the workflow easier to track and gives both team members a clearer review process before changes are merged.
+
+## GitHub Practices
+
+During Milestone 1, we mainly worked individually and pushed directly while learning React, Supabase, and deployment workflows. After receiving feedback, we realised that our GitHub practices were not strong enough and that our development process needed to show clearer collaboration.
+
+For Milestone 2 consolidation, we adopted a more structured GitHub workflow:
+
+* feature branches
+* pull requests into `main`
+* peer review before merging
+* clearer commit messages
+* improved README documentation
+* separation of feature work into smaller updates
+
+Since Liz owns the main repository, Sean worked on separate feature branches and submitted pull requests into Liz’s repository. Liz reviewed and merged Sean’s implementation-focused pull requests. This allowed us to demonstrate branching, pull requests, peer review, and a clearer GitHub collaboration workflow after the Milestone 1 feedback.
+
+## Milestone 2 Reflection
+
+After Milestone 1, we received feedback that our progress and GitHub practices were not sufficiently clear. In response, we made several changes for Milestone 2.
+
+First, we expanded the prototype beyond the initial language selection and login flow by adding multiple basic feature pages. Second, we improved the README so that the project scope, feature list, setup instructions, and milestone progress are clearer. Third, we adopted a branch-and-pull-request workflow to better show collaboration and code review.
+
+Although the current prototype is still basic, it now demonstrates the minimum Vostok-level requirements more clearly and provides a better foundation for future development.
+
+## Setup Instructions
+
+Clone the repository:
+
+```bash
+git clone https://github.com/lizziekhoo/kasama-sg.git
+cd kasama-sg
 ```
-kasama/
-├── docs/    # doccumentation screenshots 
-├── public/  # static assets
-├── src/
-│   ├── pages/
-│   │   ├── AuthPage.jsx  # language picker + login or register
-│   │   └── HomePage.jsx  
-│   ├── lib/
-│   │   └── supabase.js   # client setup
-│   ├── i18n/
-│   │   ├── index.js          
-│   │   └── translations.js   # strings in EN, FIL, ZH, TA
-│   ├── App.jsx   # routing + auth state
-│   ├── main.jsx
-│   └── index.css
-├── .env.example
-├── package.json
-├── vercel.json
-└── vite.config.js
+
+Install dependencies:
+
+```bash
+npm install
 ```
 
----
+Run the development server:
 
-## System architecture
+```bash
+npm run dev
+```
 
-The app has three layers:
+Build the project:
 
-**Frontend** — React PWA built with Vite, hosted on Vercel. Components are modular and independently developed. A service worker enables offline caching and PWA installability.
+```bash
+npm run build
+```
 
-**Backend** — Supabase provides PostgreSQL, authentication, and storage with no custom server. Row Level Security protects personal data like salary logs.
+Preview the production build locally:
 
-**External services** — OpenStreetMap and Leaflet for free map tiles (Milestone 2); GitHub for version control and CI/CD; Vercel for global CDN delivery.
+```bash
+npm run preview
+```
 
-The frontend and backend are fully decoupled — the React app communicates with Supabase through API calls only.
+## Environment Variables
 
----
+The project uses Supabase for authentication and backend-related setup. To run the app locally, create a `.env` file in the root directory and add the required Supabase environment variables.
 
-## Tech stack
+Example:
 
-| | |
-|---|---|
-| Frontend | React 18 + Vite |
-| Backend | Supabase (PostgreSQL + Auth) |
-| Routing | React Router v6 |
-| Multilingual | react-i18next |
-| Maps | Leaflet + OpenStreetMap *(Milestone 2)* |
-| Hosting | Vercel |
-| PWA | vite-plugin-pwa |
+```bash
+VITE_SUPABASE_URL=your_supabase_project_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
 
-We picked Supabase because it gives us auth, a database, and row-level security without needing a custom backend server. Leaflet + OpenStreetMap for maps because it's free and doesn't need an API key. Everything is optimised for low-end Android devices and limited data plans.
-
----
+The actual keys should not be committed to GitHub.
 
 ## Deployment
 
-The app is deployed on Vercel and automatically redeploys on every push to the `main` branch.
+The project is intended to be deployed as a web application using a frontend deployment platform such as Vercel.
 
----
+For deployment, the following should be checked:
 
-## Roadmap
+* dependencies install successfully
+* build command runs without errors
+* environment variables are added in the deployment dashboard
+* deployed link is accessible
+* main user flows can be tested on the deployed version
 
-**Milestone 1 (current)** — language selection (EN/FIL/ZH/TA), login and registration with Supabase Auth, deployed PWA on Vercel
+## Testing
 
-**Milestone 2** — curated map with Leaflet + OpenStreetMap, full rights and information library, help directory with tap-to-call, phrasebook, salary tracker
+For Milestone 2, testing was carried out mainly through manual testing of the main user flows.
 
-**Milestone 3** — audio phrasebook, stronger offline caching, community announcements, UI polish for low-end Android
+Tested flows include:
+
+* opening the app
+* selecting a language
+* navigating between pages
+* registering a user
+* logging in
+* viewing support directory pages
+* viewing rights information pages
+* viewing phrasebook pages
+* using the salary tracker / personal log page
+* checking basic mobile layout responsiveness
+
+Future versions can improve testing by adding more formal unit tests, integration tests, and user testing with target users.
+
+## Limitations
+
+The current version is a basic prototype and has several limitations:
+
+* content is still limited and can be expanded
+* translations are not yet complete across all features
+* map and location functions are still basic
+* salary tracker is a simple prototype rather than a complete financial tracking system
+* offline support and PWA features can be improved further
+* the interface can be polished for better accessibility and usability
+* more formal testing is needed
+
+## Future Improvements
+
+Future work can focus on improving the depth and polish of each feature.
+
+Possible improvements include:
+
+* expanding the rights library with more detailed and verified content
+* improving the help directory with more support organisations and clearer categories
+* adding more phrasebook categories and translations
+* improving the salary tracker with better history, summaries, and editing functions
+* developing a more complete curated map or location directory
+* improving offline support
+* improving mobile UI and accessibility
+* adding more structured tests
+* continuing to use branches and pull requests for all future development
+
+## Team Members
+
+* Elizabeth Khoo
+* Sean Nathaniel Tan
+
+## Repository
+
+Main repository:
+
+```text
+https://github.com/lizziekhoo/kasama-sg
+```
 
 
