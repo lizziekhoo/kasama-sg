@@ -1,9 +1,13 @@
 // src/i18n/translations.js
-// Translations for English, Filipino, Chinese (Simplified), Tamil
+// Translations for English, Filipino, Chinese (Simplified), Tamil.
+// Auth strings came first (Milestone 1); everything under "nav", "home",
+// "contacts", "rights", "map", "place", "salary", "phrase" and "me" is new
+// for the Milestone 2 features.
 
 export const translations = {
   en: {
     translation: {
+      // ---- auth / general (from Milestone 1) ----
       welcome: "Hey there! Welcome to Kasama",
       tagline: "Together, we belong.",
       chooseLanguage: "Let's pick your language",
@@ -25,10 +29,98 @@ export const translations = {
       errorInvalidCredentials: "Hmm, that doesn't look right. Wanna double-check?",
       errorEmailTaken: "Looks like someone's already using that email!",
       errorWeakPassword: "Let's make it stronger — at least 6 characters, yeah?",
+      errorPasswordMismatch: "Those don't match — try typing them again.",
       errorGeneric: "Oops! Something didn't go as planned. Give it another shot?",
       successRegister: "You're all set! Check your inbox to confirm your email.",
+
+      // ---- bottom nav ----
+      'nav.home': 'Home',
+      'nav.help': 'Help',
+      'nav.rights': 'Rights',
+      'nav.map': 'Map',
+      'nav.me': 'Me',
+
+      // ---- home ----
+      'home.greeting': 'Welcome back',
+      'home.subhead': 'What would you like to do today?',
+      'home.emergencyBanner': 'In an emergency, call 999 (police) or 995 (ambulance).',
+      'home.emergencyCta': 'See helplines',
+      'home.helpTitle': 'Help & Helplines',
+      'home.helpDesc': 'Tap-to-call numbers for when you need them.',
+      'home.rightsTitle': 'Know your rights',
+      'home.rightsDesc': 'Clear info on rest days, pay and more.',
+      'home.mapTitle': 'Find your places',
+      'home.mapDesc': 'Community, worship and familiar food.',
+      'home.salaryTitle': 'My pay',
+      'home.salaryDesc': 'Keep track of what you’ve earned.',
+      'home.phrasesTitle': 'Phrasebook',
+      'home.phrasesDesc': 'Handy phrases in your language.',
+
+      // ---- contacts ----
+      'contacts.title': 'Help & Helplines',
+      'contacts.search': 'Search helplines…',
+      'contacts.all': 'All',
+      'contacts.call': 'Call',
+      'contacts.seeMap': 'See on map',
+      'contacts.loading': 'Loading helplines…',
+      'contacts.empty': 'No helplines found.',
+
+      // ---- rights ----
+      'rights.title': 'Your rights',
+      'rights.readMore': 'Read more',
+      'rights.loading': 'Loading…',
+      'rights.empty': 'No information available yet.',
+      'rights.offline': 'Offline — showing saved copy',
+      'rights.savedForOffline': 'Saved for offline reading',
+      'rights.notFound': 'We couldn’t find that page.',
+
+      // ---- map ----
+      'map.title': 'Around you',
+      'map.loading': 'Loading map…',
+      'map.viewDetails': 'View details',
+      'map.all': 'All',
+      'map.directions': 'Get directions',
+
+      // ---- place detail ----
+      'place.address': 'Address',
+      'place.tip': 'Tip',
+      'place.back': '← Back to map',
+
+      // ---- salary ----
+      'salary.title': 'My pay',
+      'salary.add': 'Log a payment',
+      'salary.amount': 'Amount (SGD)',
+      'salary.date': 'Date',
+      'salary.hours': 'Hours worked',
+      'salary.note': 'Note (optional)',
+      'salary.save': 'Save',
+      'salary.thisMonth': 'This month',
+      'salary.allTime': 'All time',
+      'salary.entries': 'Recent payments',
+      'salary.empty': 'Nothing logged yet. Add your first payment above.',
+      'salary.delete': 'Delete',
+      'salary.confirmDelete': 'Remove this entry?',
+      'salary.invalidAmount': 'Enter an amount greater than 0.',
+
+      // ---- phrasebook ----
+      'phrase.title': 'Phrasebook',
+      'phrase.copy': 'Copy',
+      'phrase.copied': 'Copied!',
+      'phrase.all': 'All',
+      'phrase.tapToFlip': 'Tap to see English',
+
+      // ---- me ----
+      'me.title': 'Me',
+      'me.signedInAs': 'Signed in as',
+      'me.tools': 'My tools',
+      'me.signOut': 'Sign out',
+
+      // ---- shared ----
+      'common.back': 'Back',
+      'common.error': 'Something went wrong.',
     }
   },
+
   fil: {
     translation: {
       welcome: 'Kamusta! Maligayang pagdating sa Kasama',
@@ -52,10 +144,88 @@ export const translations = {
       errorInvalidCredentials: 'Hmm, parang mali iyan. Maaari mong subukang ulit?',
       errorEmailTaken: 'Parang may gumagamit na ng email na iyan!',
       errorWeakPassword: 'Gawin nating mas malakas — 6 na karakter o mas marami, sige ba?',
+      errorPasswordMismatch: 'Hindi tumugma — subukang ilagay ulit.',
       errorGeneric: 'Ay, may nangyaring hindi tama. Subukan ulit?',
       successRegister: 'Ayos na! Check lang ng iyong email para kumpirmahin.',
+
+      'nav.home': 'Home',
+      'nav.help': 'Tulong',
+      'nav.rights': 'Karapatan',
+      'nav.map': 'Mapa',
+      'nav.me': 'Ako',
+
+      'home.greeting': 'Maligayang pagbalik',
+      'home.subhead': 'Anong gusto mong gawin ngayon?',
+      'home.emergencyBanner': 'Sa emergency, tawagan ang 999 (pulis) o 995 (ambulansya).',
+      'home.emergencyCta': 'Mga helpline',
+      'home.helpTitle': 'Tulong at Helpline',
+      'home.helpDesc': 'Mga numerong maaaring tawagan agad.',
+      'home.rightsTitle': 'Alamin ang iyong karapatan',
+      'home.rightsDesc': 'Maliwanag na impormasyon tungkol sa rest day, sahod at iba pa.',
+      'home.mapTitle': 'Hanapin ang mga lugar',
+      'home.mapDesc': 'Komunidad, simbahan, at paboritong pagkain.',
+      'home.salaryTitle': 'Aking sahod',
+      'home.salaryDesc': 'Subaybayan ang iyong kita.',
+      'home.phrasesTitle': 'Phrasebook',
+      'home.phrasesDesc': 'Mga kapaki-pakinabang na pananalita sa iyong wika.',
+
+      'contacts.title': 'Tulong at Helpline',
+      'contacts.search': 'Maghanap ng helpline…',
+      'contacts.all': 'Lahat',
+      'contacts.call': 'Tawag',
+      'contacts.seeMap': 'Tingnan sa mapa',
+      'contacts.loading': 'Naglo-load…',
+      'contacts.empty': 'Walang nakitang helpline.',
+
+      'rights.title': 'Iyong karapatan',
+      'rights.readMore': 'Magbasa pa',
+      'rights.loading': 'Naglo-load…',
+      'rights.empty': 'Wala pang impormasyon.',
+      'rights.offline': 'Offline — nakasave na kopya',
+      'rights.savedForOffline': 'Nakasave para sa offline reading',
+      'rights.notFound': 'Hindi namin mahanap ang pahinang iyan.',
+
+      'map.title': 'Sa paligid',
+      'map.loading': 'Naglo-load ng mapa…',
+      'map.viewDetails': 'Tingnan ang detalye',
+      'map.all': 'Lahat',
+      'map.directions': 'Kunin ang direksyon',
+
+      'place.address': 'Address',
+      'place.tip': 'Tip',
+      'place.back': '← Bumalik sa mapa',
+
+      'salary.title': 'Aking sahod',
+      'salary.add': 'Itala ang bayad',
+      'salary.amount': 'Halaga (SGD)',
+      'salary.date': 'Petsa',
+      'salary.hours': 'Oras na nagawa',
+      'salary.note': 'Tala (opsyonal)',
+      'salary.save': 'I-save',
+      'salary.thisMonth': 'Ngayong buwan',
+      'salary.allTime': 'Kabuuan',
+      'salary.entries': 'Mga kamakailang bayad',
+      'salary.empty': 'Wala pang naitala. Idagdag ang unang bayad sa taas.',
+      'salary.delete': 'Tanggalin',
+      'salary.confirmDelete': 'Alisin ang entry na ito?',
+      'salary.invalidAmount': 'Ilagay ang halagang higit sa 0.',
+
+      'phrase.title': 'Phrasebook',
+      'phrase.copy': 'Kopyahin',
+      'phrase.copied': 'Nakopya!',
+      'phrase.all': 'Lahat',
+      'phrase.tapToFlip': 'I-tap para makita ang English',
+
+      'me.title': 'Ako',
+      'me.signedInAs': 'Naka-sign in bilang',
+      'me.tools': 'Aking mga gamit',
+      'me.signOut': 'Mag-sign out',
+
+      'common.back': 'Bumalik',
+      'common.error': 'May nangyaring mali.',
     }
   },
+
   zh: {
     translation: {
       welcome: '嘿！欢迎来到 Kasama',
@@ -79,10 +249,88 @@ export const translations = {
       errorInvalidCredentials: '嗯，看起来不太对。要不再检查一下？',
       errorEmailTaken: '这个邮箱已经被注册过啦！',
       errorWeakPassword: '让它更安全点——至少6个字符，好吗？',
+      errorPasswordMismatch: '两次输入不一致——请再输一遍。',
       errorGeneric: '哎呀，出了点问题。再试一次？',
       successRegister: '搞定！去邮箱确认一下吧。',
+
+      'nav.home': '首页',
+      'nav.help': '帮助',
+      'nav.rights': '权利',
+      'nav.map': '地图',
+      'nav.me': '我的',
+
+      'home.greeting': '欢迎回来',
+      'home.subhead': '今天想做点什么？',
+      'home.emergencyBanner': '紧急情况请拨 999（警察）或 995（救护车）。',
+      'home.emergencyCta': '查看求助热线',
+      'home.helpTitle': '帮助与热线',
+      'home.helpDesc': '需要时一键拨打的号码。',
+      'home.rightsTitle': '了解你的权利',
+      'home.rightsDesc': '清楚说明休息日、工资等。',
+      'home.mapTitle': '寻找去处',
+      'home.mapDesc': '社区、宗教场所和家乡美食。',
+      'home.salaryTitle': '我的工资',
+      'home.salaryDesc': '记录你的收入。',
+      'home.phrasesTitle': '常用短语',
+      'home.phrasesDesc': '用你的语言说出这些短语。',
+
+      'contacts.title': '帮助与热线',
+      'contacts.search': '搜索热线……',
+      'contacts.all': '全部',
+      'contacts.call': '拨打',
+      'contacts.seeMap': '在地图上查看',
+      'contacts.loading': '加载中……',
+      'contacts.empty': '暂无热线。',
+
+      'rights.title': '你的权利',
+      'rights.readMore': '阅读更多',
+      'rights.loading': '加载中……',
+      'rights.empty': '暂无信息。',
+      'rights.offline': '离线——显示已保存的内容',
+      'rights.savedForOffline': '已保存，可离线阅读',
+      'rights.notFound': '找不到这个页面。',
+
+      'map.title': '你周围',
+      'map.loading': '地图加载中……',
+      'map.viewDetails': '查看详情',
+      'map.all': '全部',
+      'map.directions': '获取路线',
+
+      'place.address': '地址',
+      'place.tip': '小贴士',
+      'place.back': '← 返回地图',
+
+      'salary.title': '我的工资',
+      'salary.add': '记录一笔工资',
+      'salary.amount': '金额（新币）',
+      'salary.date': '日期',
+      'salary.hours': '工作时长',
+      'salary.note': '备注（可选）',
+      'salary.save': '保存',
+      'salary.thisMonth': '本月',
+      'salary.allTime': '总计',
+      'salary.entries': '近期记录',
+      'salary.empty': '还没有记录。在上方添加第一笔吧。',
+      'salary.delete': '删除',
+      'salary.confirmDelete': '删除这条记录？',
+      'salary.invalidAmount': '请输入大于 0 的金额。',
+
+      'phrase.title': '常用短语',
+      'phrase.copy': '复制',
+      'phrase.copied': '已复制！',
+      'phrase.all': '全部',
+      'phrase.tapToFlip': '点按查看英文',
+
+      'me.title': '我的',
+      'me.signedInAs': '已登录',
+      'me.tools': '我的工具',
+      'me.signOut': '退出登录',
+
+      'common.back': '返回',
+      'common.error': '出错了。',
     }
   },
+
   ta: {
     translation: {
       welcome: 'வணக்கம்! Kasama-க்கு வரவேற்கிறோம்',
@@ -106,8 +354,85 @@ export const translations = {
       errorInvalidCredentials: 'ஹ்ம், ஏதோ தவறாக இருக்கிறது. மீண்டும் பார்க்கலாமா?',
       errorEmailTaken: 'இந்த மின்னஞ்சலை யாரோ ஏற்கனவே பயன்படுத்துகிறார்கள்!',
       errorWeakPassword: 'அதை வலுவாக்குவோம் — குறைந்தது 6 எழுத்துகள், சரிதான்?',
+      errorPasswordMismatch: 'அவை பொருந்தவில்லை — மீண்டும் தட்டச்சு செய்யவும்.',
       errorGeneric: 'அட, ஏதோ தவறு நடந்தது. மீண்டும் முயற்சிக்கிறோம்?',
       successRegister: 'அனைத்தும் தயார்! உங்கள் மின்னஞ்சலை சரிபார்க்கவும்.',
+
+      'nav.home': 'முகப்பு',
+      'nav.help': 'உதவி',
+      'nav.rights': 'உரிமைகள்',
+      'nav.map': 'வரைபடம்',
+      'nav.me': 'நான்',
+
+      'home.greeting': 'மீண்டும் வரவேற்கிறோம்',
+      'home.subhead': 'இன்று என்ன செய்ய விரும்புகிறீர்கள்?',
+      'home.emergencyBanner': 'அவசரத்தில் 999 (காவல்துறை) அல்லது 995 (ஆம்புலன்ஸ்) அழைக்கவும்.',
+      'home.emergencyCta': 'உதவிக் கோடுகள்',
+      'home.helpTitle': 'உதவி & தொலைபேசி',
+      'home.helpDesc': 'தேவையான போது ஒரே தட்டில் அழைக்க எண்கள்.',
+      'home.rightsTitle': 'உங்கள் உரிமைகளை அறியுங்கள்',
+      'home.rightsDesc': 'ஓய்வு நாள், சம்பளம் பற்றிய தெளிவான தகவல்.',
+      'home.mapTitle': 'இடங்களைக் கண்டறியுங்கள்',
+      'home.mapDesc': 'சமூகம், வழிபாடு, சொந்த உணவு.',
+      'home.salaryTitle': 'என் சம்பளம்',
+      'home.salaryDesc': 'உங்கள் வருவாயைக் கண்காணியுங்கள்.',
+      'home.phrasesTitle': 'சொற்றொடர் புத்தகம்',
+      'home.phrasesDesc': 'உங்கள் மொழியில் பயனுள்ள சொற்றொடர்கள்.',
+
+      'contacts.title': 'உதவி & தொலைபேசி',
+      'contacts.search': 'உதவிக் கோடுகளைத் தேடுங்கள்…',
+      'contacts.all': 'அனைத்தும்',
+      'contacts.call': 'அழை',
+      'contacts.seeMap': 'வரைபடத்தில் பார்',
+      'contacts.loading': 'ஏற்றுகிறது…',
+      'contacts.empty': 'உதவிக் கோடுகள் இல்லை.',
+
+      'rights.title': 'உங்கள் உரிமைகள்',
+      'rights.readMore': 'மேலும் படிக்க',
+      'rights.loading': 'ஏற்றுகிறது…',
+      'rights.empty': 'தகவல் இல்லை.',
+      'rights.offline': 'ஆஃப்லைன் — சேமிக்கப்பட்ட பிரதி',
+      'rights.savedForOffline': 'ஆஃப்லைனில் படிக்க சேமிக்கப்பட்டது',
+      'rights.notFound': 'அந்தப் பக்கத்தைக் காணவில்லை.',
+
+      'map.title': 'உங்களைச் சுற்றி',
+      'map.loading': 'வரைபடம் ஏற்றுகிறது…',
+      'map.viewDetails': 'விவரங்களைப் பார்',
+      'map.all': 'அனைத்தும்',
+      'map.directions': 'வழிமுறையைப் பெறு',
+
+      'place.address': 'முகவரி',
+      'place.tip': 'குறிப்பு',
+      'place.back': '← வரைபடத்திற்குத் திரும்பு',
+
+      'salary.title': 'என் சம்பளம்',
+      'salary.add': 'கொடுப்பனவைப் பதிவுசெய்',
+      'salary.amount': 'தொகை (SGD)',
+      'salary.date': 'தேதி',
+      'salary.hours': 'வேலை செய்த நேரம்',
+      'salary.note': 'குறிப்பு (விருப்பம்)',
+      'salary.save': 'சேமி',
+      'salary.thisMonth': 'இந்த மாதம்',
+      'salary.allTime': 'மொத்தம்',
+      'salary.entries': 'சமீபத்திய கொடுப்பனவுகள்',
+      'salary.empty': 'இன்னும் எதுவும் இல்லை. மேலே உங்கள் முதல் கொடுப்பனவைச் சேர்க்கவும்.',
+      'salary.delete': 'நீக்கு',
+      'salary.confirmDelete': 'இந்தப் பதிவை அகற்றவா?',
+      'salary.invalidAmount': '0 ஐ விட அதிக தொகையை உள்ளிடவும்.',
+
+      'phrase.title': 'சொற்றொடர் புத்தகம்',
+      'phrase.copy': 'நகலெடு',
+      'phrase.copied': 'நகலெடுக்கப்பட்டது!',
+      'phrase.all': 'அனைத்தும்',
+      'phrase.tapToFlip': 'ஆங்கிலம் பார்க்க தட்டவும்',
+
+      'me.title': 'நான்',
+      'me.signedInAs': 'உள்நுழைந்தவர்',
+      'me.tools': 'என் கருவிகள்',
+      'me.signOut': 'வெளியேறு',
+
+      'common.back': 'திரும்பு',
+      'common.error': 'ஏதோ தவறு நடந்தது.',
     }
   }
 }
