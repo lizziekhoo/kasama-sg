@@ -3,7 +3,7 @@
 
 **Team ID:** 6347
 **Level of Achievement:** Vostok
-**Team Members:** Sean Tan, Liz Khoo
+**Team Members:** Sean Tan, Elizabeth(Liz) Khoo
 **Milestone:** 2
 **GitHub:** https://github.com/lizziekhoo/kasama-sg
 **Deployment:** To be updated / Available on request
