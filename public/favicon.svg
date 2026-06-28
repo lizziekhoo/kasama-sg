@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Kasama app icon: green rounded tile with a heart -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1f8059"/>
+      <stop offset="100%" stop-color="#155c3f"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <!-- heart built from two circles + a downward triangle, all one colour -->
+  <g fill="#f06a8c">
+    <circle cx="196" cy="222" r="82"/>
+    <circle cx="316" cy="222" r="82"/>
+    <polygon points="120,244 392,244 256,408"/>
+  </g>
+</svg>
