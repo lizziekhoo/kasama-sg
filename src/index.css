@@ -24,3 +24,19 @@ input:focus {
 button:hover {
   opacity: 0.9;
 }
+
+/* ---- Leaflet map tweaks ----
+   The map should speak our font, and its tiles/pins need to sit below the
+   fixed bottom nav (which sits at z-index 1000). */
+.leaflet-container {
+  font-family: 'DM Sans', 'Segoe UI', sans-serif;
+  background: #e6e9ec;
+}
+.leaflet-container a {
+  color: #2a7ab0;
+}
+
+/* Hide the horizontal scrollbar on the filter-chip rows (kept scrollable). */
+.chips::-webkit-scrollbar {
+  display: none;
+}
