@@ -1,7 +1,7 @@
 
 # KASAMA
 
-**Team ID:** XXXX
+**Team ID:** 6347
 **Level of Achievement:** Vostok
 **Team Members:** Sean Tan, Liz Khoo
 **Milestone:** 2
@@ -327,8 +327,27 @@ npm run dev
 
 ### Screenshot / screen recording
 
-To be added before submission.
+#### Language Selection
 
+![Language selection screen](docs/language1.jpeg)
+
+![Language selection confirmation screen](docs/language2.jpeg)
+
+#### Login Attempt
+
+![Login attempt screen](docs/loginattempt.jpeg)
+
+#### Create Account
+
+![Create account screen](docs/createaccount.jpeg)
+
+#### Login Error Handling
+
+![Login error handling screen](docs/loginfail.jpeg)
+
+#### Successful Login
+
+![Successful login screen](docs/loginsucess.jpeg)
 ---
 
 ## 9. Testing
