@@ -1,9 +1,3 @@
-// src/i18n/translations.js
-// Translations for English, Filipino, Chinese (Simplified), Tamil.
-// Auth strings came first (Milestone 1); everything under "nav", "home",
-// "contacts", "rights", "map", "place", "salary", "phrase" and "me" is new
-// for the Milestone 2 features.
-
 export const translations = {
   en: {
     translation: {
@@ -114,6 +108,7 @@ export const translations = {
       'me.signedInAs': 'Signed in as',
       'me.tools': 'My tools',
       'me.signOut': 'Sign out',
+      'me.language': 'Language',
 
       // ---- shared ----
       'common.back': 'Back',
@@ -220,6 +215,7 @@ export const translations = {
       'me.signedInAs': 'Naka-sign in bilang',
       'me.tools': 'Aking mga gamit',
       'me.signOut': 'Mag-sign out',
+      'me.language': 'Wika',
 
       'common.back': 'Bumalik',
       'common.error': 'May nangyaring mali.',
@@ -325,6 +321,7 @@ export const translations = {
       'me.signedInAs': '已登录',
       'me.tools': '我的工具',
       'me.signOut': '退出登录',
+      'me.language': '语言',
 
       'common.back': '返回',
       'common.error': '出错了。',
@@ -430,6 +427,7 @@ export const translations = {
       'me.signedInAs': 'உள்நுழைந்தவர்',
       'me.tools': 'என் கருவிகள்',
       'me.signOut': 'வெளியேறு',
+      'me.language': 'மொழி',
 
       'common.back': 'திரும்பு',
       'common.error': 'ஏதோ தவறு நடந்தது.',
