@@ -1,9 +1,3 @@
-// src/data/places.js
-// The curated map. We hand-pick the places instead of pulling from some big
-// database on purpose — these are the spots that actually matter to the
-// community (where people gather on Sundays, worship, find familiar food).
-// Coordinates are roughly right; good enough to drop a pin.
-
 export const PLACE_CATEGORIES = {
   community:  { icon: '🤝', color: '#e84e7a', label: { en: 'Community',  fil: 'Komunidad',   zh: '社区',    ta: 'சமூகம்' } },
   worship:    { icon: '🙏', color: '#6b4a9e', label: { en: 'Worship',    fil: 'Pagsamba',    zh: '宗教',    ta: 'வழிபாடு' } },
@@ -113,7 +107,6 @@ export function getCategory(categoryId) {
   return PLACE_CATEGORIES[categoryId]
 }
 
-// Returns the label for a category in the user's language (English fallback).
 export function getCategoryLabel(categoryId, lang) {
   const cat = PLACE_CATEGORIES[categoryId]
   if (!cat) return categoryId
