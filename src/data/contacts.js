@@ -1,18 +1,3 @@
-// src/data/contacts.js
-// The Help & Helplines directory.
-//
-// The live app reads this from the Supabase `contacts` table, but we also ship
-// it here as a static fallback so the page is never empty — it shows this
-// content even with no backend, and the same rows are seeded into Supabase via
-// supabase/schema.sql.
-//
-// ⚠️  The emergency, MOM and TADM numbers are verified against public sources.
-//     The embassy and NGO entries marked `verified: false` are SAMPLE data for
-//     layout viewing — confirm every number against the official source before
-//     launching for real.
-//
-// Shape matches the `contacts` table: id, name, category, phone, description,
-// place_id, sort_order. Categories: emergency | work | embassies | wellbeing.
 
 export const CONTACTS = [
   // ---------------- Emergency ----------------
