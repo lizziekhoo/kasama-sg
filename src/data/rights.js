@@ -1,20 +1,3 @@
-// src/data/rights.js
-// The "Know Your Rights" library.
-//
-// Like the helplines, the live app reads this from the Supabase `rights_pages`
-// table, but we ship it here as a static fallback so the library is never
-// empty — it shows this content with no backend, and the same rows are seeded
-// into Supabase via supabase/schema.sql.
-//
-// Content reflects Ministry of Manpower (MOM) rules for migrant / foreign
-// domestic workers (MDWs / FDWs) in Singapore. Kept short and plain on
-// purpose — it's a starting point for helpers, not formal legal advice.
-// Verify against mom.gov.sg before relying on specifics.
-//
-// Shape matches `rights_pages`: slug, category, title, summary, body (+ id).
-// In `body`, a blank line starts a new paragraph and a line starting with
-// "- " or "• " becomes a bullet — see RightsDetailPage.renderBody().
-
 export const RIGHTS = [
   {
     id: 1,
