@@ -198,26 +198,26 @@ Required a new Supabase-backed data model and admin-only write permissions, sepa
 - Announcements are admin-managed rather than open like events, since this channel is meant for official/verified information.
 - Built on the same read-through cache pattern as the rights library, so the feed still loads if the network is briefly unavailable.
 
-*[Liz/Sean — please confirm/expand this, drafted from the PR title and commit list only.]*
-
 ---
 
 ### Feature 9: Organizations Directory & Profile Integration
 
 **Milestone:** 3
 **Status:** Implemented
-**User role:** Public user (browse) / Registered user (create/manage own org)
+**User role:** Public user (browse) / Registered user (create, edit, delete own)
 
 **What it does:**
-Adds an organizations directory — support groups, agencies, or community organizations — with detail pages, and integrates organization info into user profiles.
+Any registered user can create an organisation based on their own interests — not just official agencies or support groups — giving name, description, category, and a custom icon. Organisations appear in a public, browsable directory, and each has its own detail page showing its description, category badge, and the creator's name (pulled from user profiles). Community events can be tagged to an organisation, so its detail page also lists any upcoming events linked to it. The creator can edit or delete their organisation at any time; everyone else can only view.
 
 **Complexity justification:**
-Introduced a second directory pattern (alongside Contacts and Rights) plus a profile-side integration linking users to organizations they belong to or manage.
+This is the app's first fully user-owned content type with edit capability (events can only be deleted, not edited) — requiring create, read, update, and delete flows, plus a profile lookup to display the creator's name and an events-by-organisation query to link the Events and Organizations features together.
 
 **Design decisions:**
-- Mirrors the existing overview → detail page pattern used by Contacts and Rights, for UI consistency.
-
-*[Liz/Sean — same flag as above: drafted from the PR title "add organization pages and profile integration" only, please confirm/expand.]*
+- **Open creation:** any signed-in user can create an organisation, not just admins — the goal is letting helpers form and discover interest-based groups (e.g. a hobby group, a faith circle, a hometown community) rather than being limited to a fixed list of official agencies.
+- **Categories mirror events:** organisations reuse the same category-with-icon-and-color pattern as event categories, for visual consistency across the app.
+- **Cross-linking with events:** an organisation's detail page shows events tagged to it, so a group can use Kasama both to exist as a page and to announce its own gatherings.
+- **Ownership model:** only the creator can edit or delete their organisation; this is enforced the same way as event ownership.
+- **Lightweight profile integration:** rather than a separate "my organizations" page, the creator's name is looked up and shown directly on the organisation's detail page.
 
 ---
 
