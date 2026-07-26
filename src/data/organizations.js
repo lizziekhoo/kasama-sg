@@ -1,0 +1,1 @@
+pbpaste > src/data/organizations.js
