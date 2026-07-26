@@ -1,4 +1,4 @@
-what i-- Kasama — Supabase schema + seed data
+-- Kasama — Supabase schema + seed data
 -- ---------------------------------------------------------------------------
 -- It creates the two tables the frontend reads from and fills them with
 -- starter content (real Singapore helplines + accurate FDW rights info).
@@ -34,7 +34,7 @@ create table if not exists public.rights_pages (
 -- ---------------------------------------------------------------------------
 -- Row Level Security: the helplines and rights content are public reference
 -- info, so anyone (anon + authenticated) can read them. Nothing is writable
--- from the client — content is managed here, in SQL.
+-- from the client — content is managed here.
 -- ---------------------------------------------------------------------------
 alter table public.contacts     enable row level security;
 alter table public.rights_pages enable row level security;
@@ -47,10 +47,6 @@ create policy "rights are public" on public.rights_pages
   for select using (true);
 
 -- Seed: helplines
--- Emergency / MOM / TADM numbers are verified against public sources. The
--- embassy and HOME/TWC2 entries are SAMPLE data — verify each on the mission
--- or organisation's official site before launching for real.
-
 delete from public.contacts;
 insert into public.contacts (name, category, phone, description, place_id, sort_order) values
   -- Emergency
