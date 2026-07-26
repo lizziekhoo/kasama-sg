@@ -1,17 +1,20 @@
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useSession } from '../lib/session'
+import { useProfile } from '../lib/profiles'
 
 export default function HomePage() {
   const { t } = useTranslation()
   const session = useSession()
   const email = session?.user?.email || ''
   const firstName = email.split('@')[0] || ''
+  const profile = useProfile()
+  const name = profile?.name?.trim() || firstName
 
   return (
     <div>
       {/* Greeting */}
-      <p style={styles.hello}>{t('home.greeting')}{firstName ? `, ${firstName}` : ''} 👋</p>
+      <p style={styles.hello}>{t('home.greeting')}{name ? `, ${name}` : ''} 👋</p>
       <p style={styles.subhead}>{t('home.subhead')}</p>
 
       {/* Emergency shortcut — always at the top, one glance away */}
@@ -31,6 +34,8 @@ export default function HomePage() {
         <FeatureCard to="/map" icon="🗺️" color="#2a7ab0" title={t('home.mapTitle')} desc={t('home.mapDesc')} />
         <FeatureCard to="/phrasebook" icon="💬" color="#6b4a9e" title={t('home.phrasesTitle')} desc={t('home.phrasesDesc')} />
         <FeatureCard to="/salary" icon="💵" color="#d98324" title={t('home.salaryTitle')} desc={t('home.salaryDesc')} />
+        <FeatureCard to="/announcements" icon="📣" color="#5a7d3a" title={t('home.announcementsTitle')} desc={t('home.announcementsDesc')} />
+        <FeatureCard to="/organizations" icon="🤝" color="#e84e7a" title={t('home.orgsTitle')} desc={t('home.orgsDesc')} />
       </div>
     </div>
   )

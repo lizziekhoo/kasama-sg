@@ -16,9 +16,15 @@ const RightsPage       = lazy(() => import('./pages/RightsPage'))
 const RightsDetailPage = lazy(() => import('./pages/RightsDetailPage'))
 const MapPage          = lazy(() => import('./pages/MapPage'))
 const PlaceDetailPage  = lazy(() => import('./pages/PlaceDetailPage'))
+const AddEventPage     = lazy(() => import('./pages/AddEventPage'))
+const EventDetailPage  = lazy(() => import('./pages/EventDetailPage'))
 const SalaryPage       = lazy(() => import('./pages/SalaryPage'))
 const PhrasebookPage   = lazy(() => import('./pages/PhrasebookPage'))
 const MePage           = lazy(() => import('./pages/MePage'))
+const AnnouncementsPage      = lazy(() => import('./pages/AnnouncementsPage'))
+const OrganizationsPage      = lazy(() => import('./pages/OrganizationsPage'))
+const CreateOrganizationPage = lazy(() => import('./pages/CreateOrganizationPage'))
+const OrganizationDetailPage = lazy(() => import('./pages/OrganizationDetailPage'))
 
 export default function App() {
   const [session, setSession] = useState(undefined) // undefined = still loading
@@ -76,6 +82,12 @@ export default function App() {
           <Route path="/rights/:slug" element={<RightsDetailPage />} />
           <Route path="/map" element={<MapPage />} />
           <Route path="/place/:id" element={<PlaceDetailPage />} />
+          <Route path="/events/add" element={<AddEventPage />} />
+          <Route path="/event/:id" element={<EventDetailPage />} />
+          <Route path="/announcements" element={<AnnouncementsPage />} />
+          <Route path="/organizations" element={<OrganizationsPage />} />
+          <Route path="/orgs/new" element={<CreateOrganizationPage />} />
+          <Route path="/org/:id" element={<OrganizationDetailPage />} />
           <Route path="/salary" element={<SalaryPage />} />
           <Route path="/phrasebook" element={<PhrasebookPage />} />
           <Route path="/me" element={<MePage />} />

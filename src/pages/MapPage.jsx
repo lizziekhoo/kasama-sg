@@ -5,6 +5,8 @@ import 'leaflet/dist/leaflet.css'
 import { useTranslation } from 'react-i18next'
 import PageHeader from '../components/PageHeader'
 import { PLACES, PLACE_CATEGORIES, getCategory, getCategoryLabel } from '../data/places'
+import { getEventCategory } from '../data/events'
+import { listEvents } from '../lib/events'
 
 export default function MapPage() {
   const { t, i18n } = useTranslation()
@@ -15,6 +17,15 @@ export default function MapPage() {
   const mapRef = useRef(null)
   const markersRef = useRef(null)
   const [activeCat, setActiveCat] = useState('all')
+  const [events, setEvents] = useState([])
+
+  // Community events come from Supabase (with a localStorage fallback), so we
+  // fetch them once on mount and drop pins for them alongside the places.
+  useEffect(() => {
+    let alive = true
+    listEvents().then(list => { if (alive) setEvents(list || []) })
+    return () => { alive = false }
+  }, [])
 
   useEffect(() => {
     const map = L.map(mapEl.current, { zoomControl: true, attributionControl: true })
@@ -63,7 +74,30 @@ export default function MapPage() {
       marker.bindTooltip(p.name, { direction: 'top', offset: [0, -30] })
       marker.on('click', () => navigate(`/place/${p.id}`))
     })
-  }, [activeCat, navigate])
+
+    // Community events — a separate layer of pins. We show them regardless of
+    // the place category filter (they're time-based, not a place type). Events
+    // get a rounded-square pin so they read differently from the place teardrops.
+    events.forEach(ev => {
+      if (typeof ev.lat !== 'number' || typeof ev.lng !== 'number') return
+      const cat = getEventCategory(ev.category)
+      const icon = L.divIcon({
+        className: 'kasama-pin kasama-pin--event',
+        html: `<div style="
+          width:32px;height:32px;border-radius:9px;
+          background:${cat.color};border:2.5px solid #fff;
+          box-shadow:0 2px 6px rgba(0,0,0,.35);
+          display:flex;align-items:center;justify-content:center;">
+          <span style="font-size:15px;line-height:1;">${cat.icon}</span>
+        </div>`,
+        iconSize: [32, 32],
+        iconAnchor: [16, 16],
+      })
+      const marker = L.marker([ev.lat, ev.lng], { icon }).addTo(layer)
+      marker.bindTooltip(ev.title, { direction: 'top', offset: [0, -16] })
+      marker.on('click', () => navigate(`/event/${ev.id}`))
+    })
+  }, [activeCat, events, navigate])
 
   const shown = PLACES.filter(p => activeCat === 'all' || p.category === activeCat)
   const cats = Object.keys(PLACE_CATEGORIES)
@@ -71,6 +105,8 @@ export default function MapPage() {
   return (
     <div>
       <PageHeader title={t('map.title')} subtitle={t('home.mapDesc')} />
+
+      <Link to="/events/add" style={styles.addBtn}>＋ {t('event.addCta')}</Link>
 
       <div ref={mapEl} style={styles.map} />
 
@@ -101,6 +137,27 @@ export default function MapPage() {
           )
         })}
       </div>
+
+      {events.length > 0 && (
+        <div style={{ marginTop: '20px' }}>
+          <h2 style={styles.groupTitle}>{t('event.sectionTitle')}</h2>
+          {events.map(ev => {
+            const cat = getEventCategory(ev.category)
+            return (
+              <Link key={ev.id} to={`/event/${ev.id}`} style={styles.row}>
+                <span style={{ ...styles.rowIcon, background: cat.color + '20' }}>{cat.icon}</span>
+                <span style={styles.rowText}>
+                  <span style={styles.rowName}>{ev.title}</span>
+                  <span style={styles.rowCat}>
+                    {formatEventDate(ev.event_date)}{ev.event_time ? ` · ${ev.event_time}` : ''}
+                  </span>
+                </span>
+                <span style={styles.chevron}>›</span>
+              </Link>
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }
@@ -119,6 +176,14 @@ function Chip({ active, onClick, children }) {
       {children}
     </button>
   )
+}
+
+// yyyy-mm-dd → "21 Jun" for the event list rows.
+function formatEventDate(iso) {
+  if (!iso) return ''
+  const d = new Date(iso + 'T00:00:00')
+  if (isNaN(d)) return iso
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
 }
 
 const styles = {
@@ -146,6 +211,26 @@ const styles = {
     fontWeight: 600,
     cursor: 'pointer',
     whiteSpace: 'nowrap',
+  },
+  addBtn: {
+    display: 'block',
+    textAlign: 'center',
+    marginBottom: '12px',
+    padding: '12px',
+    borderRadius: '12px',
+    background: '#1a6b4a',
+    color: '#fff',
+    fontSize: '14.5px',
+    fontWeight: 600,
+    textDecoration: 'none',
+  },
+  groupTitle: {
+    fontSize: '13px',
+    fontWeight: 700,
+    color: '#1a1a1a',
+    textTransform: 'uppercase',
+    letterSpacing: '0.4px',
+    marginBottom: '10px',
   },
   row: {
     display: 'flex',
