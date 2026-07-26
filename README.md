@@ -373,14 +373,15 @@ Liz is responsible for:
 * Login and language selection
 * Rights and information library
 * Local salary logging and tracking
-* Community events, announcements, and organizations *(new, Milestone 3)*
+* Community events, location integration, and announcements *(new, Milestone 3)*
 
 Sean is responsible for:
 
 * Contact categories / help directory
 * Map and place details
 * Phrase cards / phrasebook
-
+* User profiles, organizations, and community ownership permissions *(new, Milestone 3)*
+  
 ### Pull Request Workflow
 
 For Milestone 2, each completed feature is pushed to GitHub through a feature branch. A pull request is then opened so that the other teammate can review the changes before merging.
