@@ -1,5 +1,13 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
+import {
+  Link,
+  useNavigate,
+} from 'react-router-dom'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { useTranslation } from 'react-i18next'
@@ -17,12 +25,22 @@ import {
   getEventCategoryLabel,
 } from '../data/events'
 import { listEvents } from '../lib/events'
+import {
+  getSavedLocations,
+  subscribeSavedLocations,
+} from '../lib/storage'
 
 const DEFAULT_MAP_CENTRE = [1.315, 103.84]
 const DEFAULT_MAP_ZOOM = 12
 
 function normaliseSearchText(value) {
-  return String(value || '').trim().toLowerCase()
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+}
+
+function savedLocationKey(type, id) {
+  return `${type}:${String(id)}`
 }
 
 export default function MapPage() {
@@ -37,8 +55,18 @@ export default function MapPage() {
   const [activeCat, setActiveCat] = useState('all')
   const [events, setEvents] = useState([])
   const [query, setQuery] = useState('')
+  const [showSavedOnly, setShowSavedOnly] = useState(false)
+  const [savedLocations, setSavedLocations] = useState(
+    () => getSavedLocations()
+  )
 
   const searchTerm = normaliseSearchText(query)
+
+  const savedKeys = useMemo(() => {
+    return new Set(
+      savedLocations.map(item => item.key)
+    )
+  }, [savedLocations])
 
   useEffect(() => {
     let alive = true
@@ -60,12 +88,26 @@ export default function MapPage() {
     }
   }, [])
 
+  useEffect(() => {
+    setSavedLocations(getSavedLocations())
+
+    return subscribeSavedLocations(nextLocations => {
+      setSavedLocations(nextLocations)
+    })
+  }, [])
+
   const filteredPlaces = useMemo(() => {
     return PLACES.filter(place => {
-      const matchesCategory =
-        activeCat === 'all' || place.category === activeCat
+      const key = savedLocationKey('place', place.id)
 
-      if (!matchesCategory) {
+      const matchesSaved =
+        !showSavedOnly || savedKeys.has(key)
+
+      const matchesCategory =
+        activeCat === 'all' ||
+        place.category === activeCat
+
+      if (!matchesSaved || !matchesCategory) {
         return false
       }
 
@@ -84,10 +126,22 @@ export default function MapPage() {
 
       return searchableText.includes(searchTerm)
     })
-  }, [activeCat, lang, searchTerm])
+  }, [
+    activeCat,
+    lang,
+    savedKeys,
+    searchTerm,
+    showSavedOnly,
+  ])
 
   const filteredEvents = useMemo(() => {
     return events.filter(event => {
+      const key = savedLocationKey('event', event.id)
+
+      if (showSavedOnly && !savedKeys.has(key)) {
+        return false
+      }
+
       if (!searchTerm) {
         return true
       }
@@ -108,7 +162,13 @@ export default function MapPage() {
 
       return searchableText.includes(searchTerm)
     })
-  }, [events, lang, searchTerm])
+  }, [
+    events,
+    lang,
+    savedKeys,
+    searchTerm,
+    showSavedOnly,
+  ])
 
   useEffect(() => {
     if (!mapEl.current || mapRef.current) {
@@ -118,7 +178,10 @@ export default function MapPage() {
     const map = L.map(mapEl.current, {
       zoomControl: true,
       attributionControl: true,
-    }).setView(DEFAULT_MAP_CENTRE, DEFAULT_MAP_ZOOM)
+    }).setView(
+      DEFAULT_MAP_CENTRE,
+      DEFAULT_MAP_ZOOM
+    )
 
     L.tileLayer(
       'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -154,18 +217,26 @@ export default function MapPage() {
 
     filteredPlaces.forEach(place => {
       const category = getCategory(place.category)
+      const isSaved = savedKeys.has(
+        savedLocationKey('place', place.id)
+      )
 
       const icon = L.divIcon({
         className: 'kasama-pin',
         html: `
           <div style="
+            position: relative;
             width: 34px;
             height: 34px;
             border-radius: 50% 50% 50% 0;
             transform: rotate(-45deg);
             background: ${category.color};
-            border: 2.5px solid #fff;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+            border: ${isSaved
+              ? '3px solid #f6c344'
+              : '2.5px solid #fff'};
+            box-shadow: ${isSaved
+              ? '0 0 0 3px rgba(246,195,68,.30), 0 3px 8px rgba(0,0,0,.35)'
+              : '0 2px 6px rgba(0,0,0,.35)'};
             display: flex;
             align-items: center;
             justify-content: center;
@@ -177,9 +248,33 @@ export default function MapPage() {
             ">
               ${category.icon}
             </span>
+
+            ${isSaved
+              ? `
+                <span style="
+                  position: absolute;
+                  right: -8px;
+                  top: -8px;
+                  width: 17px;
+                  height: 17px;
+                  border-radius: 50%;
+                  background: #f6c344;
+                  color: #604800;
+                  border: 2px solid #fff;
+                  transform: rotate(45deg);
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font-size: 10px;
+                  line-height: 1;
+                ">
+                  ★
+                </span>
+              `
+              : ''}
           </div>
         `,
-        iconSize: [34, 34],
+        iconSize: [42, 42],
         iconAnchor: [17, 32],
       })
 
@@ -188,10 +283,15 @@ export default function MapPage() {
         { icon }
       ).addTo(layer)
 
-      marker.bindTooltip(place.name, {
-        direction: 'top',
-        offset: [0, -30],
-      })
+      marker.bindTooltip(
+        isSaved
+          ? `★ ${place.name}`
+          : place.name,
+        {
+          direction: 'top',
+          offset: [0, -30],
+        }
+      )
 
       marker.on('click', () => {
         navigate(`/place/${place.id}`)
@@ -207,17 +307,26 @@ export default function MapPage() {
       }
 
       const category = getEventCategory(event.category)
+      const isSaved = savedKeys.has(
+        savedLocationKey('event', event.id)
+      )
 
       const icon = L.divIcon({
-        className: 'kasama-pin kasama-pin--event',
+        className:
+          'kasama-pin kasama-pin--event',
         html: `
           <div style="
+            position: relative;
             width: 32px;
             height: 32px;
             border-radius: 9px;
             background: ${category.color};
-            border: 2.5px solid #fff;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+            border: ${isSaved
+              ? '3px solid #f6c344'
+              : '2.5px solid #fff'};
+            box-shadow: ${isSaved
+              ? '0 0 0 3px rgba(246,195,68,.30), 0 3px 8px rgba(0,0,0,.35)'
+              : '0 2px 6px rgba(0,0,0,.35)'};
             display: flex;
             align-items: center;
             justify-content: center;
@@ -228,9 +337,32 @@ export default function MapPage() {
             ">
               ${category.icon}
             </span>
+
+            ${isSaved
+              ? `
+                <span style="
+                  position: absolute;
+                  right: -8px;
+                  top: -8px;
+                  width: 17px;
+                  height: 17px;
+                  border-radius: 50%;
+                  background: #f6c344;
+                  color: #604800;
+                  border: 2px solid #fff;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font-size: 10px;
+                  line-height: 1;
+                ">
+                  ★
+                </span>
+              `
+              : ''}
           </div>
         `,
-        iconSize: [32, 32],
+        iconSize: [42, 42],
         iconAnchor: [16, 16],
       })
 
@@ -239,33 +371,56 @@ export default function MapPage() {
         { icon }
       ).addTo(layer)
 
-      marker.bindTooltip(event.title, {
-        direction: 'top',
-        offset: [0, -16],
-      })
+      marker.bindTooltip(
+        isSaved
+          ? `★ ${event.title}`
+          : event.title,
+        {
+          direction: 'top',
+          offset: [0, -16],
+        }
+      )
 
       marker.on('click', () => {
         navigate(`/event/${event.id}`)
       })
     })
-  }, [filteredEvents, filteredPlaces, navigate])
+  }, [
+    filteredEvents,
+    filteredPlaces,
+    navigate,
+    savedKeys,
+  ])
 
   useEffect(() => {
     const map = mapRef.current
 
-    if (!map || !searchTerm) {
+    if (!map) {
       return
     }
 
     const coordinates = [
-      ...filteredPlaces.map(place => [place.lat, place.lng]),
+      ...filteredPlaces.map(place => [
+        place.lat,
+        place.lng,
+      ]),
       ...filteredEvents
         .filter(event => (
           typeof event.lat === 'number' &&
           typeof event.lng === 'number'
         ))
-        .map(event => [event.lat, event.lng]),
+        .map(event => [
+          event.lat,
+          event.lng,
+        ]),
     ]
+
+    if (
+      !searchTerm &&
+      !showSavedOnly
+    ) {
+      return
+    }
 
     if (coordinates.length === 1) {
       map.flyTo(coordinates[0], 15, {
@@ -282,10 +437,23 @@ export default function MapPage() {
           maxZoom: 15,
         }
       )
+      return
     }
-  }, [filteredEvents, filteredPlaces, searchTerm])
 
-  const categories = Object.keys(PLACE_CATEGORIES)
+    map.setView(
+      DEFAULT_MAP_CENTRE,
+      DEFAULT_MAP_ZOOM
+    )
+  }, [
+    filteredEvents,
+    filteredPlaces,
+    searchTerm,
+    showSavedOnly,
+  ])
+
+  const categories = Object.keys(
+    PLACE_CATEGORIES
+  )
 
   const noResults =
     filteredPlaces.length === 0 &&
@@ -294,12 +462,16 @@ export default function MapPage() {
   function clearSearch() {
     setQuery('')
 
-    if (mapRef.current) {
+    if (mapRef.current && !showSavedOnly) {
       mapRef.current.setView(
         DEFAULT_MAP_CENTRE,
         DEFAULT_MAP_ZOOM
       )
     }
+  }
+
+  function toggleSavedFilter() {
+    setShowSavedOnly(current => !current)
   }
 
   return (
@@ -310,20 +482,33 @@ export default function MapPage() {
       />
 
       <div style={styles.searchWrapper}>
-        <span aria-hidden="true" style={styles.searchIcon}>
+        <span
+          aria-hidden="true"
+          style={styles.searchIcon}
+        >
           🔍
         </span>
 
         <input
           type="search"
           value={query}
-          onChange={event => setQuery(event.target.value)}
-          placeholder={t('map.searchPlaceholder', {
-            defaultValue: 'Search places and events…',
-          })}
-          aria-label={t('map.searchPlaceholder', {
-            defaultValue: 'Search places and events',
-          })}
+          onChange={event => (
+            setQuery(event.target.value)
+          )}
+          placeholder={t(
+            'map.searchPlaceholder',
+            {
+              defaultValue:
+                'Search places and events…',
+            }
+          )}
+          aria-label={t(
+            'map.searchPlaceholder',
+            {
+              defaultValue:
+                'Search places and events',
+            }
+          )}
           style={styles.searchInput}
         />
 
@@ -331,9 +516,12 @@ export default function MapPage() {
           <button
             type="button"
             onClick={clearSearch}
-            aria-label={t('map.clearSearch', {
-              defaultValue: 'Clear search',
-            })}
+            aria-label={t(
+              'map.clearSearch',
+              {
+                defaultValue: 'Clear search',
+              }
+            )}
             style={styles.clearSearch}
           >
             ×
@@ -341,13 +529,47 @@ export default function MapPage() {
         )}
       </div>
 
-      <Link to="/events/add" style={styles.addBtn}>
-        ＋ {t('event.addCta')}
-      </Link>
+      <div style={styles.actionRow}>
+        <button
+          type="button"
+          onClick={toggleSavedFilter}
+          aria-pressed={showSavedOnly}
+          style={{
+            ...styles.savedFilter,
+            ...(showSavedOnly
+              ? styles.savedFilterActive
+              : {}),
+          }}
+        >
+          {showSavedOnly ? '★' : '☆'}{' '}
+          {t('map.savedLocations', {
+            defaultValue: 'Saved',
+          })}
 
-      <div ref={mapEl} style={styles.map} />
+          {savedLocations.length > 0 && (
+            <span style={styles.savedCount}>
+              {savedLocations.length}
+            </span>
+          )}
+        </button>
 
-      <div className="chips" style={styles.chips}>
+        <Link
+          to="/events/add"
+          style={styles.addBtn}
+        >
+          ＋ {t('event.addCta')}
+        </Link>
+      </div>
+
+      <div
+        ref={mapEl}
+        style={styles.map}
+      />
+
+      <div
+        className="chips"
+        style={styles.chips}
+      >
         <Chip
           active={activeCat === 'all'}
           onClick={() => setActiveCat('all')}
@@ -359,7 +581,9 @@ export default function MapPage() {
           <Chip
             key={categoryId}
             active={activeCat === categoryId}
-            onClick={() => setActiveCat(categoryId)}
+            onClick={() => (
+              setActiveCat(categoryId)
+            )}
           >
             {PLACE_CATEGORIES[categoryId].icon}{' '}
             {getCategoryLabel(categoryId, lang)}
@@ -367,43 +591,102 @@ export default function MapPage() {
         ))}
       </div>
 
-      {noResults && (
-        <div style={styles.empty}>
-          <span style={styles.emptyIcon}>🔎</span>
+      {showSavedOnly &&
+        savedLocations.length === 0 && (
+          <div style={styles.empty}>
+            <span style={styles.emptyIcon}>
+              ☆
+            </span>
 
-          <p style={styles.emptyTitle}>
-            {t('map.noResults', {
-              defaultValue: 'No matching places or events found.',
-            })}
-          </p>
+            <p style={styles.emptyTitle}>
+              {t('map.noSavedLocations', {
+                defaultValue:
+                  'You have not saved any locations yet.',
+              })}
+            </p>
 
-          <button
-            type="button"
-            onClick={clearSearch}
-            style={styles.emptyButton}
-          >
-            {t('map.clearSearch', {
-              defaultValue: 'Clear search',
-            })}
-          </button>
-        </div>
-      )}
+            <p style={styles.emptyText}>
+              {t('map.saveLocationHint', {
+                defaultValue:
+                  'Open a place or event and select Save location.',
+              })}
+            </p>
+
+            <button
+              type="button"
+              onClick={() => setShowSavedOnly(false)}
+              style={styles.emptyButton}
+            >
+              {t('map.showAll', {
+                defaultValue: 'Show all locations',
+              })}
+            </button>
+          </div>
+        )}
+
+      {noResults &&
+        !(
+          showSavedOnly &&
+          savedLocations.length === 0
+        ) && (
+          <div style={styles.empty}>
+            <span style={styles.emptyIcon}>
+              🔎
+            </span>
+
+            <p style={styles.emptyTitle}>
+              {t('map.noResults', {
+                defaultValue:
+                  'No matching places or events found.',
+              })}
+            </p>
+
+            <button
+              type="button"
+              onClick={() => {
+                setQuery('')
+                setActiveCat('all')
+                setShowSavedOnly(false)
+              }}
+              style={styles.emptyButton}
+            >
+              {t('map.clearFilters', {
+                defaultValue: 'Clear filters',
+              })}
+            </button>
+          </div>
+        )}
 
       {filteredPlaces.length > 0 && (
         <div style={{ marginTop: '16px' }}>
           {filteredPlaces.map(place => {
-            const category = getCategory(place.category)
+            const category = getCategory(
+              place.category
+            )
+
+            const isSaved = savedKeys.has(
+              savedLocationKey(
+                'place',
+                place.id
+              )
+            )
 
             return (
               <Link
                 key={place.id}
                 to={`/place/${place.id}`}
-                style={styles.row}
+                style={{
+                  ...styles.row,
+                  ...(isSaved
+                    ? styles.savedRow
+                    : {}),
+                }}
               >
                 <span
                   style={{
                     ...styles.rowIcon,
-                    background: `${category.color}20`,
+                    background:
+                      `${category.color}20`,
                   }}
                 >
                   {category.icon}
@@ -415,17 +698,34 @@ export default function MapPage() {
                   </span>
 
                   <span style={styles.rowCat}>
-                    {getCategoryLabel(place.category, lang)}
+                    {getCategoryLabel(
+                      place.category,
+                      lang
+                    )}
                   </span>
 
-                  {searchTerm && place.address && (
-                    <span style={styles.rowAddress}>
-                      {place.address}
-                    </span>
-                  )}
+                  {searchTerm &&
+                    place.address && (
+                      <span
+                        style={styles.rowAddress}
+                      >
+                        {place.address}
+                      </span>
+                    )}
                 </span>
 
-                <span style={styles.chevron}>›</span>
+                {isSaved && (
+                  <span
+                    aria-label="Saved"
+                    style={styles.savedStar}
+                  >
+                    ★
+                  </span>
+                )}
+
+                <span style={styles.chevron}>
+                  ›
+                </span>
               </Link>
             )
           })}
@@ -439,18 +739,33 @@ export default function MapPage() {
           </h2>
 
           {filteredEvents.map(event => {
-            const category = getEventCategory(event.category)
+            const category = getEventCategory(
+              event.category
+            )
+
+            const isSaved = savedKeys.has(
+              savedLocationKey(
+                'event',
+                event.id
+              )
+            )
 
             return (
               <Link
                 key={event.id}
                 to={`/event/${event.id}`}
-                style={styles.row}
+                style={{
+                  ...styles.row,
+                  ...(isSaved
+                    ? styles.savedRow
+                    : {}),
+                }}
               >
                 <span
                   style={{
                     ...styles.rowIcon,
-                    background: `${category.color}20`,
+                    background:
+                      `${category.color}20`,
                   }}
                 >
                   {category.icon}
@@ -462,20 +777,37 @@ export default function MapPage() {
                   </span>
 
                   <span style={styles.rowCat}>
-                    {formatEventDate(event.event_date)}
+                    {formatEventDate(
+                      event.event_date
+                    )}
+
                     {event.event_time
                       ? ` · ${event.event_time}`
                       : ''}
                   </span>
 
-                  {searchTerm && event.address && (
-                    <span style={styles.rowAddress}>
-                      {event.address}
-                    </span>
-                  )}
+                  {searchTerm &&
+                    event.address && (
+                      <span
+                        style={styles.rowAddress}
+                      >
+                        {event.address}
+                      </span>
+                    )}
                 </span>
 
-                <span style={styles.chevron}>›</span>
+                {isSaved && (
+                  <span
+                    aria-label="Saved"
+                    style={styles.savedStar}
+                  >
+                    ★
+                  </span>
+                )}
+
+                <span style={styles.chevron}>
+                  ›
+                </span>
               </Link>
             )
           })}
@@ -485,18 +817,25 @@ export default function MapPage() {
   )
 }
 
-function Chip({ active, onClick, children }) {
+function Chip({
+  active,
+  onClick,
+  children,
+}) {
   return (
     <button
       type="button"
       onClick={onClick}
       style={{
         ...styles.chip,
-        background: active ? '#1a6b4a' : '#fff',
-        color: active ? '#fff' : '#555',
-        border: active
-          ? '1.5px solid #1a6b4a'
-          : '1.5px solid #e8e4dc',
+        background:
+          active ? '#1a6b4a' : '#fff',
+        color:
+          active ? '#fff' : '#555',
+        border:
+          active
+            ? '1.5px solid #1a6b4a'
+            : '1.5px solid #e8e4dc',
       }}
     >
       {children}
@@ -515,16 +854,19 @@ function formatEventDate(iso) {
     return iso
   }
 
-  return date.toLocaleDateString('en-GB', {
-    day: 'numeric',
-    month: 'short',
-  })
+  return date.toLocaleDateString(
+    'en-GB',
+    {
+      day: 'numeric',
+      month: 'short',
+    }
+  )
 }
 
 const styles = {
   searchWrapper: {
     position: 'relative',
-    marginBottom: '12px',
+    marginBottom: '10px',
   },
 
   searchIcon: {
@@ -539,7 +881,7 @@ const styles = {
   searchInput: {
     width: '100%',
     boxSizing: 'border-box',
-    padding: '12px 42px 12px 42px',
+    padding: '12px 42px',
     borderRadius: '12px',
     border: '1.5px solid #e8e4dc',
     background: '#fff',
@@ -563,6 +905,58 @@ const styles = {
     fontSize: '20px',
     lineHeight: 1,
     cursor: 'pointer',
+  },
+
+  actionRow: {
+    display: 'grid',
+    gridTemplateColumns: 'auto 1fr',
+    gap: '10px',
+    marginBottom: '12px',
+  },
+
+  savedFilter: {
+    minWidth: '104px',
+    padding: '11px 12px',
+    borderRadius: '12px',
+    border: '1.5px solid #d9d4ca',
+    background: '#fff',
+    color: '#555',
+    fontFamily: 'inherit',
+    fontSize: '14px',
+    fontWeight: 700,
+    cursor: 'pointer',
+  },
+
+  savedFilterActive: {
+    borderColor: '#f6c344',
+    background: '#fff9df',
+    color: '#604800',
+  },
+
+  savedCount: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minWidth: '18px',
+    height: '18px',
+    marginLeft: '6px',
+    padding: '0 4px',
+    borderRadius: '999px',
+    background: '#f6c344',
+    color: '#604800',
+    fontSize: '11px',
+  },
+
+  addBtn: {
+    display: 'block',
+    textAlign: 'center',
+    padding: '12px',
+    borderRadius: '12px',
+    background: '#1a6b4a',
+    color: '#fff',
+    fontSize: '14.5px',
+    fontWeight: 600,
+    textDecoration: 'none',
   },
 
   map: {
@@ -592,38 +986,30 @@ const styles = {
     whiteSpace: 'nowrap',
   },
 
-  addBtn: {
-    display: 'block',
-    textAlign: 'center',
-    marginBottom: '12px',
-    padding: '12px',
-    borderRadius: '12px',
-    background: '#1a6b4a',
-    color: '#fff',
-    fontSize: '14.5px',
-    fontWeight: 600,
-    textDecoration: 'none',
-  },
-
   groupTitle: {
+    marginBottom: '10px',
+    color: '#1a1a1a',
     fontSize: '13px',
     fontWeight: 700,
-    color: '#1a1a1a',
     textTransform: 'uppercase',
     letterSpacing: '0.4px',
-    marginBottom: '10px',
   },
 
   row: {
     display: 'flex',
     alignItems: 'center',
     gap: '12px',
-    background: '#fff',
-    borderRadius: '14px',
-    padding: '12px 14px',
     marginBottom: '10px',
+    padding: '12px 14px',
+    borderRadius: '14px',
     border: '1px solid #f0ece4',
+    background: '#fff',
     textDecoration: 'none',
+  },
+
+  savedRow: {
+    borderColor: '#ead589',
+    background: '#fffdf5',
   },
 
   rowIcon: {
@@ -633,8 +1019,8 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    fontSize: '19px',
     flexShrink: 0,
+    fontSize: '19px',
   },
 
   rowText: {
@@ -645,24 +1031,29 @@ const styles = {
   },
 
   rowName: {
+    color: '#1a1a1a',
     fontSize: '15px',
     fontWeight: 700,
-    color: '#1a1a1a',
   },
 
   rowCat: {
-    fontSize: '12.5px',
-    color: '#9a9a9a',
     marginTop: '1px',
+    color: '#9a9a9a',
+    fontSize: '12.5px',
   },
 
   rowAddress: {
     marginTop: '3px',
+    overflow: 'hidden',
     color: '#777',
     fontSize: '12px',
-    overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
+  },
+
+  savedStar: {
+    color: '#d69f00',
+    fontSize: '17px',
   },
 
   chevron: {
@@ -682,14 +1073,21 @@ const styles = {
 
   emptyIcon: {
     display: 'block',
-    fontSize: '26px',
     marginBottom: '8px',
+    fontSize: '26px',
   },
 
   emptyTitle: {
-    margin: '0 0 12px',
+    margin: '0 0 8px',
     color: '#666',
     fontSize: '14px',
+    lineHeight: 1.45,
+  },
+
+  emptyText: {
+    margin: '0 0 12px',
+    color: '#999',
+    fontSize: '12.5px',
     lineHeight: 1.45,
   },
 
