@@ -1,4 +1,3 @@
-
 # KASAMA
 
 **Team ID:** 6774
@@ -27,7 +26,7 @@
 
 ## 1. Problem Motivation
 
-Migrant domestic workers and foreign workers in Singapore may face practical challenges when trying to access everyday support. Important information can be scattered across different websites, hotlines, maps, agencies, and organisations. For users who may be unfamiliar with Singapore’s systems, local geography, or language, finding the correct information quickly can be confusing and stressful.
+Migrant domestic workers and foreign workers in Singapore may face practical challenges when trying to access everyday support. Important information can be scattered across different websites, hotlines, maps, agencies, and organisations. For users who may be unfamiliar with Singapore's systems, local geography, or language, finding the correct information quickly can be confusing and stressful.
 
 This issue becomes more important when users need support during urgent or unfamiliar situations. Existing resources may contain useful information, but they are not always presented in a simple, mobile-first format that allows users to quickly access emergency contacts, rights information, useful locations, salary records, and common phrases.
 
@@ -163,6 +162,65 @@ We used a card-based phrasebook layout because users may need to quickly find an
 
 ---
 
+### Feature 7: Community Events (Add Event on Map)
+
+**Milestone:** 3
+**Status:** Implemented
+**User role:** Registered user (create/delete own) / Public user (view)
+
+**What it does:**
+Registered users can add community events (e.g. Sunday meet-ups, volleyball tournaments) directly onto the Map page. Events appear as pins alongside curated places, plus a dedicated "Community events" list. Location can be set two ways: picking an existing curated place, or typing a free-form address that gets geocoded into a pin. Each event has an "Open in Google Maps" button that launches directly to its location. Creators can delete their own events.
+
+**Complexity justification:**
+This feature required extending the map from a static, read-only pin layer into a live, user-generated one — introducing cloud storage with row-level security, a geocoding integration, and a dual-mode location input (curated place vs. free-text address) that had to gracefully degrade when geocoding fails.
+
+**Design decisions:**
+- **Storage:** Supabase (shared, cloud), so every user sees every event — matching the app's community-support mission. A localStorage fallback keeps the feature working even without Supabase configured.
+- **Location input:** we support both structured (pick a place) and unstructured (type an address) input, since not every event happens at a place already in our directory.
+- **Geocoding:** typed addresses are resolved via Nominatim (OpenStreetMap's free geocoder — same family as our existing map tiles), keeping the project free of paid API keys. This is best-effort: if geocoding fails, the event still saves with its address and a working Google Maps link, just without a pin.
+- **Permissions:** any signed-in user can post an event; only the creator can delete it, enforced via Supabase RLS policies rather than client-side checks alone.
+
+---
+
+### Feature 8: Community Announcements
+
+**Milestone:** 3
+**Status:** Implemented
+**User role:** Public user (view) / Admin (create)
+
+**What it does:**
+An admin-managed announcements feed, giving the team a way to push time-sensitive or official information to all users (distinct from user-submitted events).
+
+**Complexity justification:**
+Required a new Supabase-backed data model and admin-only write permissions, separate from the public read-only content pattern used elsewhere (contacts, rights).
+
+**Design decisions:**
+- Announcements are admin-managed rather than open like events, since this channel is meant for official/verified information.
+- Built on the same read-through cache pattern as the rights library, so the feed still loads if the network is briefly unavailable.
+
+*[Liz/Sean — please confirm/expand this, drafted from the PR title and commit list only.]*
+
+---
+
+### Feature 9: Organizations Directory & Profile Integration
+
+**Milestone:** 3
+**Status:** Implemented
+**User role:** Public user (browse) / Registered user (create/manage own org)
+
+**What it does:**
+Adds an organizations directory — support groups, agencies, or community organizations — with detail pages, and integrates organization info into user profiles.
+
+**Complexity justification:**
+Introduced a second directory pattern (alongside Contacts and Rights) plus a profile-side integration linking users to organizations they belong to or manage.
+
+**Design decisions:**
+- Mirrors the existing overview → detail page pattern used by Contacts and Rights, for UI consistency.
+
+*[Liz/Sean — same flag as above: drafted from the PR title "add organization pages and profile integration" only, please confirm/expand.]*
+
+---
+
 ## 5. Tech Stack
 
 | Layer                    | Technology                    | Why we chose it                                                                                                                             |
@@ -173,9 +231,12 @@ We used a card-based phrasebook layout because users may need to quickly find an
 | Data                     | Local JavaScript data files   | For the Vostok prototype, local data files are sufficient to demonstrate feature flows without requiring a full backend for every resource. |
 | Authentication / Backend | Supabase, where applicable    | Supabase can support authentication and database features if the app is expanded beyond the prototype stage.                                |
 | Hosting                  | To be updated                 | Deployment can be added through platforms such as Vercel after integration is complete.                                                     |
+| Geocoding                | Nominatim (OpenStreetMap)     | Free, no API key required, keeping the project cost-free; same provider family as our existing map tiles. *(added Milestone 3)*             |
 
 **How the stack fits together:**
 The React frontend is organised into pages, reusable components, and data files. Users interact with feature pages such as Contacts, Rights, Map, Salary, and Phrasebook. These pages render structured information from local data files and reusable UI components. Supabase can be used where authentication or database-backed features are needed.
+
+*(Milestone 3 addition: Supabase now also backs user-generated content — community events and organizations — protected by row-level security, with typed event addresses converted to map coordinates via Nominatim.)*
 
 ---
 
@@ -206,11 +267,24 @@ Reusable Components
 Local Data Files / Supabase where applicable
 ```
 
+**Milestone 3 addition — new pages and geocoding step:**
+```text
+ |-- AddEventPage / EventDetailPage        <-- new (M3)
+ |-- AnnouncementsPage                     <-- new (M3)
+ |-- OrganizationsPage / OrganizationDetailPage / CreateOrganizationPage  <-- new (M3)
+ ...
+ | geocodes via
+ v
+Nominatim (OpenStreetMap)
+```
+
 ### Explanation
 
 The app is structured as a React frontend with separate pages for each major feature. Each page focuses on one user goal, such as finding contacts, reading rights information, browsing places, logging salary information, or viewing phrase cards.
 
 Reusable components help keep the interface consistent across pages. Local data files are used for structured prototype content, while Supabase can support authentication and future database-backed features.
+
+**Milestone 3 addition:** Milestone 3 introduced the app's first user-generated content: community events and organization profiles are now written by users (not just admins), governed by Supabase row-level security so users can only create/delete their own entries. Typed event addresses are turned into map pins via Nominatim geocoding, with a safe fallback (address-only, no pin) if geocoding fails.
 
 ### User Flow / Use Cases
 
@@ -242,6 +316,20 @@ Reusable components help keep the interface consistent across pages. Local data 
 **Steps:** User opens the app → navigates to Phrasebook → browses categories → selects a useful phrase
 **Outcome:** User can read or show a phrase for basic communication.
 
+#### Use Case 5: Adding a Community Event *(new, Milestone 3)*
+
+**Actor:** Registered user
+**Goal:** Let other users know about an upcoming community event
+**Steps:** User opens the app → navigates to Map → taps "Add event" → picks a curated place or types an address → fills in event details → submits
+**Outcome:** The event appears as a pin on the map and in the community events list, with a working "Open in Google Maps" link.
+
+#### Use Case 6: Browsing Organizations *(new, Milestone 3)*
+
+**Actor:** Public user
+**Goal:** Find a relevant support organization
+**Steps:** User opens the app → navigates to Organizations → browses the directory → opens an organization's detail page
+**Outcome:** User can view more information about the organization.
+
 ---
 
 ## 7. Planning & Version Control
@@ -257,6 +345,8 @@ We use simple conventional commit messages to make the purpose of each change ea
 * `feat:` for new features
 * `docs:` for documentation updates
 
+*(Milestone 3 addition: also used `test:` for testing-related changes.)*
+
 ### Branching Strategy
 
 Each major feature is developed on a separate feature branch before being merged into `main` through a pull request. This allows us to keep each feature contribution separate and easier to review.
@@ -270,6 +360,11 @@ Examples of feature branches:
 * `feature/salary-tracker`
 * `feature/phrase-cards`
 * `docs/readme-template-update`
+* `feature/events-ui-map` *(new, Milestone 3)*
+* `feature/events-backend-geocoding` *(new, Milestone 3)*
+* `feature/announcements-and-testing` *(new, Milestone 3)*
+* `feature/organizations-ui` *(new, Milestone 3)*
+* `feature/profiles-organizations-backend` *(new, Milestone 3)*
 
 ### Responsibility Split
 
@@ -278,6 +373,7 @@ Liz is responsible for:
 * Login and language selection
 * Rights and information library
 * Local salary logging and tracking
+* Community events, announcements, and organizations *(new, Milestone 3)*
 
 Sean is responsible for:
 
@@ -299,7 +395,9 @@ Our workflow is:
 6. The other teammate reviews the code.
 7. The pull request is approved and merged into `main`.
 
-This helps us show clearer version control evidence and separates each teammate’s contributions by feature.
+This helps us show clearer version control evidence and separates each teammate's contributions by feature.
+
+*(Milestone 3 addition: this same workflow was followed for the events, announcements, and organizations features.)*
 
 ---
 
@@ -324,6 +422,8 @@ npm run dev
 3. The app demonstrates structured information display using React pages, reusable components, and local data files.
 4. The prototype shows the main user journeys required for the Vostok Milestone 2 scope.
 5. The project demonstrates a feature-branch and pull-request workflow between both team members.
+6. *(Milestone 3 addition)* Users can add community events to the map, with geocoding fallback for typed addresses, and open events directly in Google Maps.
+7. *(Milestone 3 addition)* Users can view community announcements and browse the organizations directory.
 
 ### Screenshot / screen recording
 
@@ -348,6 +448,7 @@ npm run dev
 #### Successful Login
 
 ![Successful login screen](docs/loginsucess.jpeg)
+
 ---
 
 ## 9. Testing
@@ -362,50 +463,12 @@ Our testing process was:
 4. Once the feature was working satisfactorily, it was committed and pushed to the main repository through a feature branch.
 5. The other team member then reviewed the pull request before it was merged.
 
+*(Milestone 3 addition: testing also covered Supabase RLS behaviour — confirming users can only delete their own events/organizations — and degraded-mode behaviour when Supabase isn't configured.)*
+
 | Test Case                    | Steps                                                                            | Expected Result                                         | Actual Result | Pass? |
 | ---------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------- | ------------- | ----- |
 | Login and language selection | Tested locally in VS Code by opening the page and going through the entry flow   | User can access the login/language flow clearly         | As expected   | ✓     |
 | Contact categories           | Tested locally by opening the Contacts page and checking the listed categories   | Contact categories display clearly and are easy to scan | As expected   | ✓     |
 | Rights library               | Tested locally by opening the Rights page and checking the topic/detail flow     | User can browse rights information clearly              | As expected   | ✓     |
 | Map and place details        | Tested locally by opening the Map page and checking the place detail flow        | User can view useful places and their details           | As expected   | ✓     |
-| Salary tracker               | Tested locally by opening the Salary page and checking the logging interface     | Salary tracker interface displays correctly             | As expected   | ✓     |
-| Phrase cards                 | Tested locally by opening the Phrasebook page and checking the phrase categories | Phrase cards display clearly in categories              | As expected   | ✓     |
-| Pull request review          | Pushed each completed feature to the main repository through a feature branch    | Other teammate can review the code before merging       | As expected   | ✓     |
-
----
-
-## 10. Development Plan
-
-### Completed by Milestone 2
-
-* Login and language selection flow
-* Contact categories / help directory page
-* Rights and information library pages
-* Map and place detail pages
-* Local salary tracker page
-* Phrasebook / phrase cards page
-* Basic feature split and GitHub pull request workflow
-* Basic manual system testing
-
-### Planned for Milestone 3
-
-* Improve routing and final integration between all pages
-* Add more polished UI styling and mobile responsiveness
-* Add screenshots or screen recording for documentation
-* Improve data quality and expand resource content
-* Add stronger Supabase integration where useful
-* Conduct user testing with a small group of users
-* Final documentation and README cleanup
-
-### Risks and Mitigations
-
-* **Risk:** Some feature pages may depend on shared components or data files that are not yet fully integrated.
-  **Mitigation:** We will create a final integration PR to fix imports, routing, shared components, and build issues.
-
-* **Risk:** Scope may become too large if we try to fully implement backend features for every page.
-  **Mitigation:** For Vostok, we focus on a working frontend prototype with clear feature flows and only add backend support where necessary.
-
-* **Risk:** The app may not yet be fully polished for mobile use.
-  **Mitigation:** We will prioritise mobile layout testing and UI cleanup before Milestone 3.
-
----
+| Salary tracker               | Tested locally by opening the Salary page and
